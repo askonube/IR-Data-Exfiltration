@@ -17,7 +17,7 @@ Set up the hunt by defining what you're looking for.
 An employee named John Doe, working in a sensitive department, was placed on a performance improvement plan (PIP). After exhibiting emotional behavior, management became concerned that John might attempt to exfiltrate proprietary information.
 
 ### Hypothesis:
-John has admin rights on his corporate device `alex-mde-test`, including unrestricted PowerShell usage. He may compress and archive files and upload them to an external source.
+...
 
 ---
 
@@ -38,7 +38,7 @@ Located multiple instances of ZIP file creation and movement to a `backup` direc
 
 ```kql
 DeviceFileEvents
-| where DeviceName == "alex-mde-test"
+| where DeviceName == ""
 | where FileName contains "zip"
 | sort by Timestamp desc
 ```
@@ -61,7 +61,7 @@ Analyze data to test your hypothesis.
 - 7-Zip was used to archive employee data.
 
 ```kql
-let VMName = "alex-mde-test";
+let VMName = "";
 let specificTime = datetime(2025-04-09T22:17:16.6780857Z);
 DeviceProcessEvents
 | where Timestamp between ((specificTime - 2m) .. (specificTime + 2m))
@@ -79,7 +79,7 @@ No signs of external data transfer found in `DeviceNetworkEvents`.
 ```kql
 DeviceNetworkEvents
 | where Timestamp between ((specificTime - 2m) .. (specificTime + 2m))
-| where DeviceName == "alex-mde-test"
+| where DeviceName == ""
 | order by Timestamp desc
 ```
 
