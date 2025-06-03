@@ -1,6 +1,6 @@
 # IR-Data-Exfiltration
 
-# 🛡️ Insider Threat Hunting: Suspected Data Exfiltration from PIP'd Employee
+# Data Exfiltration from PIP'd Employee
 
 ## Overview
 
