@@ -1,10 +1,10 @@
-# IR-Data-Exfiltration
 
 # Data Exfiltration from PIP'd Employee
 
 ## Overview
 
-This project documents a cybersecurity incident response simulation involving a suspected insider threat. A user placed on a performance improvement plan was observed exhibiting behavior that could indicate data exfiltration. The investigation was conducted using **Microsoft Defender for Endpoint (MDE)** data tables to identify, analyze, and respond to suspicious file archiving activity.
+
+The project below showcases the different steps in an incident response scenario involving data exfiltration by a threat from within. Compromised insiders and disgruntled employees are often suspected as the main culprits after having ruled out external threats. The main tool used in this investigation was **Microsoft Defender for Endpoint (MDE)**, leveraging Kusto Query Language (KQL) and threat hunting logs to identify indicators of unauthorised data exfiltration.
 
 ---
 
