@@ -92,6 +92,14 @@ DeviceNetworkEvents
 ### Goal
 Investigate any suspicious findings.
 
+
+- John, an employee with privileged access, used PowerShell scripts (T1059.001) to silently install 7-Zip (T1105), a compression utility.
+
+- He continuously archived and moved the files to backup folders, which may serve as a method to hide or remove original data (T1070.004), complicating detection efforts.
+    
+- He compressed sensitive employee data into ZIP archives (T1560.001) as part of local data staging (T1074), consolidating files in preparation for potential exfiltration.
+    
+    
 ### MITRE ATT&CK TTPs
 
 1. **Tactic:** Command and Scripting Interpreter: PowerShell (T1059.001)
@@ -113,21 +121,6 @@ Investigate any suspicious findings.
 5. **Tactic:** Ingress Tool Transfer (T1105)
     
     - **Technique:** The silent installation of 7-Zip shows the adversary transferred and installed a tool onto the target system to facilitate data compression and staging.
-        
-6. **Tactic:** Obfuscated Files or Information (T1027)
-    
-    - **Technique:** Using scripts to silently install and execute 7-Zip for creating ZIP archives may involve obfuscation techniques to evade detection by security tools.
-
-## Explanation of Relevance to John's Scenario
-
-- John, a privileged insider, used PowerShell scripts (T1059.001) to silently install 7-Zip (T1105), a compression utility.
-    
-- He compressed sensitive employee data into ZIP archives (T1560.001) as part of local data staging (T1074), consolidating files in preparation for potential exfiltration.
-    
-- The archiving and moving of files to backup folders may serve as a method to hide or remove original data (T1070.004), complicating detection efforts.
-    
-- The use of scripting and silent installation suggests possible obfuscation (T1027) to avoid triggering security alerts.
-
 
 ---
 
