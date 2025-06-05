@@ -8,18 +8,18 @@ The project illustrates a threat hunting investigation focused on a potential un
 
 ---
 
-## 🧭 1. Preparation
+## 1. Preparation
 
-### 🎯 Goal:
+### Goal:
 Set up the hunt by defining what you're looking for.
 
 ### Scenario:
-An employee named John Doe, working in a sensitive department, was placed on a performance improvement plan (PIP). After exhibiting emotional behavior, management became concerned that John might attempt to exfiltrate proprietary information.
+
+An employee named John Doe, working in a sensitive department, recently got put on a performance improvement plan (PIP). After John threw a fit, management has raised concerns that John may be planning to steal proprietary information and then quit the company. 
 
 ### Hypothesis:
-...
 
----
+John is an administrator on his corporate device with unrestricted access to applications. After his recent placement in the Performance Improvement Plan (PIP), he may try to archive/compress sensitive information and transfer it to an external location for exfiltration.
 
 ## 🗃️ 2. Data Collection
 
