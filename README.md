@@ -10,9 +10,6 @@ The project illustrates a threat hunting investigation focused on a potential un
 
 ## 1. Preparation
 
-### Goal:
-Set up the hunt by defining what you're looking for.
-
 ### Scenario:
 
 John works in a department that deals with critical and sensitive information. Management has decided to place him on the performance improvement plan for unspecified reasons. John reacted unfavourably and has caused concern amongst the management team. They are now concerned that he may be a threat to the organisation by potentially stealing any crucial information and eventually leaving the company. 
@@ -22,10 +19,6 @@ John works in a department that deals with critical and sensitive information. M
 John is an administrator on his corporate device with unrestricted access to applications. After his recent placement in the Performance Improvement Plan (PIP), he may try to archive/compress sensitive information and transfer it to an external location for exfiltration.
 
 ## 2. Data Collection
-
-### Goal:
-Gather relevant data from logs, network traffic, and endpoints.
-- Consider inspecting process activity as well as the file system for anything that matches the compression or exfiltration of data.
   
 ### Action:
 Searched the following Microsoft Defender for Endpoint tables:
@@ -49,9 +42,6 @@ DeviceFileEvents
 ---
 
 ## 3. Data Analysis
-
-### Goal
-Analyze data to test the hypothesis.
 
 ### Findings
 
@@ -89,10 +79,6 @@ DeviceNetworkEvents
 
 ## 4. Investigation
 
-### Goal
-Investigate any suspicious findings.
-
-
 - John, an employee with privileged access, used PowerShell scripts (T1059.001) to silently install 7-Zip (T1105), a compression utility.
 
 - He continuously archived and moved the files to backup folders, which may serve as a method to hide or remove original data (T1070.004), complicating detection efforts.
@@ -126,9 +112,6 @@ Investigate any suspicious findings.
 
 ## 5. Response
 
-### Goal  
-Mitigate any confirmed threats.
-
 ### Actions Taken
 - Immediately isolated the system upon discovering the archiving activities.
 
@@ -144,9 +127,6 @@ DeviceFileEvents
 ---
 
 ## 6. Improvement
-
-### Goal  
-Improve your security posture or refine your methods.
 
 ### Prevention:
 - **Principle of Least Privilege and Access Controls**: Limit access based on employees' roles. Review and adjust any unnecessary or elevated access privileges to employees on the PIP program while also avoiding overly restrictive policies to allow the employee to improve performance.
