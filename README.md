@@ -3,8 +3,8 @@
 
 ## Overview
 
+The project illustrates a threat hunting investigation focused on a potential unauthorised data exfiltration attempt by a threat from within the organisation. After ruling out external threats, the investigation shifted focus to potentially compromised insiders — those who may have fallen victim to social engineering, credential theft, or malware infection — as well as disgruntled employees motivated by revenge. The primary tool used was**Microsoft Defender for Endpoint (MDE)**, while leveraging Kusto Query Language (KQL) to query detailed threat hunting logs to identify indicators of unauthorised data exfiltration. The findings showcase the importance of continuous monitoring and proactive threat hunting to mitigate insider risks and safeguard sensitive organizational data.
 
-The project below showcases the different steps in an incident response scenario involving data exfiltration by a threat from within. Compromised insiders and disgruntled employees are often suspected as the main culprits after having ruled out external threats. The main tool used in this investigation was **Microsoft Defender for Endpoint (MDE)**, leveraging Kusto Query Language (KQL) and threat hunting logs to identify indicators of unauthorised data exfiltration.
 
 ---
 
