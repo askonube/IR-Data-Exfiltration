@@ -170,7 +170,6 @@ Improve your security posture or refine your methods.
 
 ## Conclusion
 
-This investigation highlights how behavioral analysis and endpoint telemetry can uncover early signs of insider threats. Even without confirmed exfiltration, the act of staging data for compression on a sensitive employee’s device warrants serious scrutiny.
-
+Data exfiltration remains a formidable threat from those that may or may not have appropriate access controls. It is critical to monitor employee behaviour closely through necessary tools and telemetry to mitigate these risks. Though this investigation did not uncover any critical or confirmed external data transfer, the tactics that were used exposed severe security gaps. Addressing these gaps is necessary to strengthen defences against attacks from within.
 
 
