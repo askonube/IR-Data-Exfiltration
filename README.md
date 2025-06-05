@@ -15,7 +15,7 @@ Set up the hunt by defining what you're looking for.
 
 ### Scenario:
 
-An employee named John Doe, working in a sensitive department, recently got put on a performance improvement plan (PIP). After John threw a fit, management has raised concerns that John may be planning to steal proprietary information and then quit the company. 
+John works in a department that deals with critical and sensitive information. Management has decided to place him on the performance improvement plan for unspecified reasons. John reacted unfavourably and has caused concern amongst the management team. They are now concerned that he may be a threat to the organisation by potentially stealing any crucial information and eventually leaving the company. 
 
 ### Hypothesis:
 
@@ -25,7 +25,8 @@ John is an administrator on his corporate device with unrestricted access to app
 
 ### Goal:
 Gather relevant data from logs, network traffic, and endpoints.
-
+- Consider inspecting process activity as well as the file system for anything that matches the compression or exfiltration of data.
+  
 ### Action:
 Searched the following Microsoft Defender for Endpoint tables:
 
@@ -34,121 +35,140 @@ Searched the following Microsoft Defender for Endpoint tables:
 - `DeviceNetworkEvents`
 
 #### Initial Findings:
-Located multiple instances of ZIP file creation and movement to a `backup` directory.
+
+We did a search within MDE DeviceFileEvents for any activities with zip files, and found a lot of normal activity of archiving files and moving them to a "backup" folder.
 
 ```kql
 DeviceFileEvents
-| where DeviceName == ""
-| where FileName contains "zip"
-| sort by Timestamp desc
+| where DeviceName == "win-vm-mde"
+| where FileName endswith ".zip"
+| order by Timestamp desc
 ```
-
-![image](THIS IS A SCREENSHOT OF THE QUERIES FROM DEVICEFILEEVENTS)
-
+<img width="1298" alt="Pasted image 20250329155117" src="https://github.com/user-attachments/assets/63e551f6-3f95-4a13-9797-5c5d8224e77a" />
 
 ---
 
-## 📊 3. Data Analysis
+## 3. Data Analysis
 
-### 🎯 Goal
-Analyze data to test your hypothesis.
+### Goal
+Analyze data to test the hypothesis.
 
 ### Findings
-- Used a specific ZIP file creation timestamp to investigate surrounding events.
 
-### Observed
-- PowerShell silently installed 7-Zip.
-- 7-Zip was used to archive employee data.
+I took one of the instances of a zip file being created, took the timestamp and searched under DeviceProcessEvents for anything happening 2 minutes before the archive was created and 2 minutes after. I discovered around the same time that a powershell script silently installed 7zip and then used 7zip to zip up employee data into an archive: 
+
 
 ```kql
-let VMName = "";
-let specificTime = datetime(2025-04-09T22:17:16.6780857Z);
+let VMName = "win-vm-mde";
+let specificTime = datetime(2025-03-29T07:17:11.3510997Z);
 DeviceProcessEvents
 | where Timestamp between ((specificTime - 2m) .. (specificTime + 2m))
 | where DeviceName == VMName
 | order by Timestamp desc
+| project Timestamp, DeviceName, ActionType, FileName, ProcessCommandLine, InitiatingProcessCommandLine
 ```
 
-![image](THIS IS A SCREENSHOT OF THE QUERIES FROM DEVICEPROCESSEVENTS)
+<img width="1376" alt="Pasted image 20250329161935" src="https://github.com/user-attachments/assets/39b2327f-4ec6-4949-9741-aceec3d52670" />
 
 
 ### Exfiltration Check
 
-No signs of external data transfer found in `DeviceNetworkEvents`.
+I searched around the same time period for any evidence of exfiltration querying `DeviceNetworkEvents`. There were a few successful connections based on the ActionTypes that were labelled ConnectionSuccess, but none of them contained any signs of external data transfer.
 
 ```kql
+let VMName = "win-vm-mde";
+let specificTime = datetime(2025-03-29T07:17:11.3510997Z);
 DeviceNetworkEvents
 | where Timestamp between ((specificTime - 2m) .. (specificTime + 2m))
-| where DeviceName == ""
+| where DeviceName == VMName
 | order by Timestamp desc
+| project Timestamp, DeviceName, ActionType
 ```
 
 ---
 
-## 🕵️‍♂️ 4. Investigation
+## 4. Investigation
 
-### 🎯 Goal
+### Goal
 Investigate any suspicious findings.
 
 ### MITRE ATT&CK TTPs
 
-| Tactic          | Technique                  | Description                                               |
-|-----------------|----------------------------|-----------------------------------------------------------|
-| Execution       | PowerShell (T1086)         | Used to silently install and execute 7-Zip                |
-| Persistence     | Scheduled Task/Job (T1053) | Potential persistence vector for automated archiving      |
-| Defense Evasion | Masquerading (T1036)       | Use of 7-Zip may mask malicious intent                    |
-| Collection      | Data Staged (T1074)        | Data prepared in ZIP archive potentially for exfiltration |
+1. **Tactic:** Command and Scripting Interpreter: PowerShell (T1059.001)
+    
+    - **Technique:** PowerShell was used to silently install 7-Zip and create ZIP archives. This suggests malicious use of PowerShell for script execution to automate data collection and compression.
+        
+2. **Tactic:** Archive Collected Data: Archive via Utility (T1560.001)
+    
+    - **Technique:** The use of 7-Zip to compress data into an archive aligns with this technique, where data is collected and compressed before potential exfiltration.
+        
+3. **Tactic:** Data Staged (T1074)
+    
+    - **Technique:** Data was staged locally by creating ZIP archives of sensitive employee data, consolidating files into a central location prior to exfiltration. This staging often involves interactive command shells or scripts (e.g., PowerShell) to gather, compress, and prepare data for transfer, minimizing detection risk.
+        
+4. **Tactic:** Indicator Removal on Host: File Deletion (T1070.004)
+    
+    - **Technique:** The consistent archiving and moving of files to backup folders may indicate attempts to obscure or stage data, potentially to avoid detection by removing or hiding original files.
+        
+5. **Tactic:** Ingress Tool Transfer (T1105)
+    
+    - **Technique:** The silent installation of 7-Zip shows the adversary transferred and installed a tool onto the target system to facilitate data compression and staging.
+        
+6. **Tactic:** Obfuscated Files or Information (T1027)
+    
+    - **Technique:** Using scripts to silently install and execute 7-Zip for creating ZIP archives may involve obfuscation techniques to evade detection by security tools.
+
+## Explanation of Relevance to John's Scenario
+
+- John, a privileged insider, used PowerShell scripts (T1059.001) to silently install 7-Zip (T1105), a compression utility.
+    
+- He compressed sensitive employee data into ZIP archives (T1560.001) as part of local data staging (T1074), consolidating files in preparation for potential exfiltration.
+    
+- The archiving and moving of files to backup folders may serve as a method to hide or remove original data (T1070.004), complicating detection efforts.
+    
+- The use of scripting and silent installation suggests possible obfuscation (T1027) to avoid triggering security alerts.
 
 
 ---
 
-## 🚨 5. Response
+## 5. Response
 
-### 🎯 Goal  
+### Goal  
 Mitigate any confirmed threats.
 
 ### Actions Taken
-- All findings were escalated to John’s manager for HR handling.  
-- No evidence of data exfiltration was found.  
-- Recommended monitoring of John’s device for further activity.
+- Immediately isolated the system upon discovering the archiving activities.
 
+- Created a detection rule to monitor any suspicious activity. Within this alert, the machine will be automatically isolated, serving as a makeshift Data Loss Prevention (DLP) solution.
+
+```kql
+DeviceFileEvents
+| where FileName endswith ".zip"
+| summarize ZipFileActivity = count() by RequestAccountName
+| where ZipFileActivity > 5
+```
+- Relayed the information to the John's manager, including the archived data being created at regular intervals via powershell script. There didn't appear to be any evidence of exfiltration.
 ---
 
-## 📝 6. Documentation
+## 6. Improvement
 
-### 🎯 Goal  
-Record your findings and learn from them.
-
-### 📚 What was Documented
-- Query logs with timestamps  
-- Observed file and process behavior  
-- MITRE ATT&CK mapping  
-- Management escalation actions
-
----
-
-## 🔄 7. Improvement
-
-### 🎯 Goal  
+### Goal  
 Improve your security posture or refine your methods.
 
-### Prevention Recommendations:
-- **PowerShell Logging & Restrictions**: Enable Script Block and Module Logging, and apply Constrained Language Mode.  
-- **Least Privilege**: Restrict unnecessary admin rights and software installation privileges.  
-- **Application Whitelisting**: Prevent unauthorized tools like 7-Zip from being silently installed.  
-- **Behavioral Alerts**: Create alerts for:
-  - PowerShell installing programs
-  - Mass ZIP file creation
-  - Admin user archiving sensitive files
+### Prevention:
+- **Principle of Least Privilege and Access Controls**: Limit access based on employees' roles. Review and adjust any unnecessary or elevated access privileges to employees on the PIP program while also avoiding overly restrictive policies to allow the employee to improve performance.
+- **Continuous Monitoring**: Deploy Data Loss Prevention (DLP) solutions and implement continuous monitoring to detect and block suspicious behaviours such as silent tool installation, data compression or exfiltration attempts.
+- **PowerShell Restrictions**: Place PowerShell into Constrained Language Mode, reducing risk of executing malicious scripts.
+- **Real-Time Alerting**: Use EDR and DLP solutions to detect anomalies such as unauthorised archive creation and silent Powershell program installations
 
-### ⚙️ Hunting Process Enhancements:
-- Automate correlation between `DeviceFileEvents` and `DeviceProcessEvents`
-- Add scheduled process hunting based on timestamp-based anomalies
-- Improve user behavior baselining (e.g., who normally uses 7-Zip?)
+### Threat Hunting:
+- Use KQL queries to focus on Powershell commands installing tools or compression utilities (7-Zip) and creation of archive files (.zip, .rar)
+- Correlate network events between `DeviceFileEvents` and `DeviceProcessEvents` to detect potential exfiltration attempts
+- Regularly audit changes to user privileges especially unauthorised privilege escalations
 
 ---
 
-## 📌 Summary
+## Conclusion
 
 This investigation highlights how behavioral analysis and endpoint telemetry can uncover early signs of insider threats. Even without confirmed exfiltration, the act of staging data for compression on a sensitive employee’s device warrants serious scrutiny.
 
