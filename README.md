@@ -21,9 +21,9 @@ An employee named John Doe, working in a sensitive department, recently got put 
 
 John is an administrator on his corporate device with unrestricted access to applications. After his recent placement in the Performance Improvement Plan (PIP), he may try to archive/compress sensitive information and transfer it to an external location for exfiltration.
 
-## 🗃️ 2. Data Collection
+## 2. Data Collection
 
-### 🎯 Goal:
+### Goal:
 Gather relevant data from logs, network traffic, and endpoints.
 
 ### Action:
