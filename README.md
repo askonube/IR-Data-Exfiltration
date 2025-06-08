@@ -88,25 +88,26 @@ DeviceNetworkEvents
     
 ### MITRE ATT&CK TTPs
 
-1. **Tactic:** Command and Scripting Interpreter: PowerShell (T1059.001)
+1. **Tactic: Execution (TA0002)** 
     
-    - **Technique:** PowerShell was used to silently install 7-Zip and create ZIP archives. This suggests malicious use of PowerShell for script execution to automate data collection and compression.
+    - **Technique: Command and Scripting Interpreter: PowerShell (T1059.001)** PowerShell was used to silently install 7-Zip and create ZIP archives. This suggests malicious use of PowerShell for script execution to automate data collection and compression.
         
-2. **Tactic:** Archive Collected Data: Archive via Utility (T1560.001)
+2. **Tactic: Collection (TA0009)** 
     
-    - **Technique:** The use of 7-Zip to compress data into an archive aligns with this technique, where data is collected and compressed before potential exfiltration.
+    - **Technique: Archive Collected Data: Archive via Utility (T1560.001)** The use of 7-Zip to compress data into an archive aligns with this technique, where data is collected and compressed before potential exfiltration.
         
-3. **Tactic:** Data Staged (T1074)
+3. **Tactic: Collection (TA0009)** 
     
-    - **Technique:** Data was staged locally by creating ZIP archives of sensitive employee data, consolidating files into a central location prior to exfiltration. This staging often involves interactive command shells or scripts (e.g., PowerShell) to gather, compress, and prepare data for transfer, minimizing detection risk.
+    - **Technique: Data Staged (T1074)** Data was staged locally by creating ZIP archives of sensitive employee data, consolidating files into a central location prior to exfiltration. This staging often involves interactive command shells or scripts (e.g., PowerShell) to gather, compress, and prepare data for transfer, minimizing detection risk.
         
-4. **Tactic:** Indicator Removal on Host: File Deletion (T1070.004)
+4. **Tactic: Defense Evasion (TA0005)** 
     
-    - **Technique:** The consistent archiving and moving of files to backup folders may indicate attempts to obscure or stage data, potentially to avoid detection by removing or hiding original files.
+    - **Technique: Indicator Removal on Host: File Deletion (T1070.004)** The consistent archiving and moving of files to backup folders may indicate attempts to obscure or stage data, potentially to avoid detection by removing or hiding original files.
         
-5. **Tactic:** Ingress Tool Transfer (T1105)
+5. **Tactic: Command and Control (TA0011)** 
     
-    - **Technique:** The silent installation of 7-Zip shows the adversary transferred and installed a tool onto the target system to facilitate data compression and staging.
+    - **Technique: Ingress Tool Transfer (T1105)** The silent installation of 7-Zip shows the adversary transferred and installed a tool onto the target system to facilitate data compression and staging.
+
 
 ---
 
