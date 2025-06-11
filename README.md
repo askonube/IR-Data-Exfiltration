@@ -79,11 +79,11 @@ DeviceNetworkEvents
 
 ## 4. Investigation
 
-- John, an employee with privileged access, used PowerShell scripts (T1059.001) to silently install 7-Zip (T1105), a compression utility.
+- John, an employee with privileged access, used PowerShell scripts to silently install 7-Zip, a compression utility.
 
-- He continuously archived and moved the files to backup folders, which may serve as a method to hide or remove original data (T1070.004), complicating detection efforts.
+- He continuously archived and moved the files to backup folders, which may serve as a method to hide or remove original data, complicating detection efforts.
     
-- He compressed sensitive employee data into ZIP archives (T1560.001) as part of local data staging (T1074), consolidating files in preparation for potential exfiltration.
+- He compressed sensitive employee data into ZIP archives as part of local data staging, consolidating files in preparation for potential exfiltration.
     
     
 ### MITRE ATT&CK TTPs
